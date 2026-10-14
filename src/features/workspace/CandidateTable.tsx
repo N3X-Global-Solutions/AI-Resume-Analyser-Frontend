@@ -1,6 +1,7 @@
 import { ChevronRight, Mail, MapPin } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { CandidateListItem, CandidateStatus } from '../../api/types'
+import { SourceBadge } from '../../components/SourceBadge'
 import { StatusQuickActions } from '../../components/StatusActions'
 import { Checkbox, ScoreRing, Tooltip } from '../../components/ui'
 import { cn } from '../../lib/cn'
@@ -139,13 +140,16 @@ export function CandidateTable({
                     {candidate.rank !== null ? `#${candidate.rank}` : '—'}
                   </td>
                   <td className="max-w-0 px-2 py-3">
-                    <Link
-                      to={`/candidates/${candidate.id}`}
-                      onClick={(event) => event.stopPropagation()}
-                      className="block truncate font-semibold text-slate-900 group-hover:text-indigo-700 focus-visible:outline-none focus-visible:underline"
-                    >
-                      {name}
-                    </Link>
+                    <div className="flex min-w-0 items-center gap-2">
+                      <Link
+                        to={`/candidates/${candidate.id}`}
+                        onClick={(event) => event.stopPropagation()}
+                        className="truncate font-semibold text-slate-900 group-hover:text-indigo-700 focus-visible:outline-none focus-visible:underline"
+                      >
+                        {name}
+                      </Link>
+                      <SourceBadge source={candidate.source} />
+                    </div>
                     {candidate.headline && <p className="truncate text-sm text-slate-600">{candidate.headline}</p>}
                     <p className="flex min-w-0 items-center gap-3 truncate text-xs text-slate-400">
                       {candidate.location && (
@@ -202,10 +206,13 @@ export function CandidateTable({
               <div className="min-w-0 flex-1 space-y-2.5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <Link to={`/candidates/${candidate.id}`} className="block truncate font-semibold text-slate-900">
-                      <span className="mr-1.5 text-slate-400 tabular-nums">#{candidate.rank ?? '—'}</span>
-                      {name}
-                    </Link>
+                    <div className="flex min-w-0 items-center gap-2">
+                      <Link to={`/candidates/${candidate.id}`} className="truncate font-semibold text-slate-900">
+                        <span className="mr-1.5 text-slate-400 tabular-nums">#{candidate.rank ?? '—'}</span>
+                        {name}
+                      </Link>
+                      <SourceBadge source={candidate.source} />
+                    </div>
                     {candidate.headline && <p className="truncate text-sm text-slate-600">{candidate.headline}</p>}
                     <p className="truncate text-xs text-slate-400">
                       {[candidate.location, formatYears(candidate.total_experience_years)].filter(Boolean).join(' · ')}

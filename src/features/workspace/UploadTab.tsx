@@ -20,6 +20,7 @@ import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useDeleteResume, useResumes, useRetryFailed, useRetryResume } from '../../api/hooks'
 import type { Job, ProcessingStatus, Progress, ResumeOut } from '../../api/types'
+import { SourceBadge } from '../../components/SourceBadge'
 import {
   Button,
   Card,
@@ -37,6 +38,7 @@ import {
 import { cn } from '../../lib/cn'
 import { MAX_FILE_SIZE_BYTES, MAX_ZIP_SIZE_BYTES, MODEL_LABEL } from '../../lib/constants'
 import { fileExtension, formatFileSize, formatNumber, formatPercent, formatRelative, pluralize } from '../../lib/format'
+import { PortalIntakeCard } from './PortalIntakeCard'
 import { clearUploadSession, startUpload, useUploadSession, type UploadSession } from './uploadStore'
 
 export function UploadTab({
@@ -55,6 +57,7 @@ export function UploadTab({
       <Dropzone jobId={job.id} onUploadStart={onUploadStart} />
       <UploadSummary jobId={job.id} />
       {progress && progress.total > 0 && <ProcessingPanel jobId={job.id} progress={progress} onViewRanking={onViewRanking} />}
+      <PortalIntakeCard job={job} />
       <ResumeList jobId={job.id} progress={progress} />
     </div>
   )
@@ -493,6 +496,7 @@ function ResumeRow({
 }) {
   const ext = fileExtension(resume.original_filename)
   const Icon = ext === 'zip' ? FileArchive : FileText
+  const portal = resume.source === 'portal'
   return (
     <li className="flex flex-col gap-2 px-5 py-3 sm:flex-row sm:items-center sm:gap-4">
       <div className="flex min-w-0 flex-1 items-start gap-3">
@@ -505,11 +509,15 @@ function ResumeRow({
           <Icon className="h-4 w-4" />
         </span>
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium text-slate-800" title={resume.original_filename}>
-            {resume.original_filename}
-          </p>
-          <p className="text-xs text-slate-500">
-            {formatFileSize(resume.file_size)} · uploaded {formatRelative(resume.created_at)}
+          <div className="flex min-w-0 items-center gap-2">
+            <p className="truncate text-sm font-medium text-slate-800" title={resume.original_filename}>
+              {resume.original_filename}
+            </p>
+            <SourceBadge source={resume.source} />
+          </div>
+          <p className="text-xs break-words text-slate-500">
+            {formatFileSize(resume.file_size)} · {portal ? 'received' : 'uploaded'} {formatRelative(resume.created_at)}
+            {resume.external_application_id && ` · Application ${resume.external_application_id}`}
             {resume.attempts > 1 && ` · ${resume.attempts} attempts`}
           </p>
           {resume.processing_status === 'failed' && resume.error_message && (

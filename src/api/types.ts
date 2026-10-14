@@ -15,6 +15,8 @@ export type ProcessingStatus = 'queued' | 'processing' | 'completed' | 'failed'
 export type CandidateStatus = 'new' | 'shortlisted' | 'maybe' | 'rejected'
 export type MatchTier = 'strong' | 'good' | 'partial' | 'low'
 export type MatchLevel = 'met' | 'partial' | 'missing'
+/** "upload" = dropped in this app by an admin, "portal" = sent by the job portal via the intake API. */
+export type ResumeSource = 'upload' | 'portal'
 export type CategoryKey =
   | 'required_skills'
   | 'experience'
@@ -131,6 +133,10 @@ export interface ResumeOut {
   original_filename: string
   content_type: string
   file_size: number
+  /** absent on older backends — treat as "upload" */
+  source?: ResumeSource
+  /** the portal's own application id (intake API only), else null */
+  external_application_id?: string | null
   processing_status: ProcessingStatus
   error_message: string | null
   attempts: number
@@ -303,6 +309,8 @@ export interface CandidateListItem {
   missing_required: string[]
   summary: string
   original_filename: string
+  /** of the resume; absent on older backends — treat as "upload" */
+  source?: ResumeSource
   created_at: string
   updated_at: string
 }

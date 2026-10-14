@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import { isNotFoundError } from '../../api/client'
 import { useCandidate, useCandidateAtRank, useUpdateCandidate } from '../../api/hooks'
 import type { CandidateDetail, CandidateStatus } from '../../api/types'
+import { SourceBadge } from '../../components/SourceBadge'
 import { StatusButtons } from '../../components/StatusActions'
 import { Avatar, Card, CardBody, CardHeader, CopyButton, ErrorState, ScoreRing, Skeleton, StatusBadge, TierBadge } from '../../components/ui'
 import { useDocumentTitle } from '../../hooks/useDocumentTitle'
@@ -154,6 +155,7 @@ function CandidateHeader({ candidate: c }: { candidate: CandidateDetail }) {
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{name}</h1>
                 <StatusBadge status={c.status} />
+                <SourceBadge source={c.source} />
               </div>
               {c.headline && <p className="text-base text-slate-600">{c.headline}</p>}
             </div>
